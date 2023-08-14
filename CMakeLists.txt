@@ -2,7 +2,7 @@
 # author:klug
 # 献给美人儿蕾梅黛丝
 # start:230521
-# last:230724
+# last:230814
 
 cmake_minimum_required(VERSION 3.5)
 
@@ -35,9 +35,7 @@ include_directories(/opt/pylon/share/pylon/Samples/C++/include)
 # selbst
 include_directories(~/buendia)
 include_directories(~/remedios)
-include_directories(~/artemis)
-include_directories(~/sakura/include)
-include_directories(~/klug/vortex)
+include_directories(~/undb)
 
 # opencv
 include_directories(/usr/local/include/opencv4)
@@ -59,14 +57,14 @@ set(PROJECT_SOURCES
     # algorithm
     ~/remedios/img_process/laser_length_measure.cpp
     ~/remedios/img_process/laser_length_measure.hpp
-    ~/remedios/img_process/laserLengthMeasure.cpp
-    ~/remedios/img_process/laserLengthMeasure.hpp
+    #~/remedios/img_process/laserLengthMeasure.cpp
+    #~/remedios/img_process/laserLengthMeasure.hpp
     ~/remedios/img_process/zenturmExtract.cpp
     ~/remedios/img_process/zenturmExtract.hpp
     ~/remedios/galvo/galvo.hpp
     ~/remedios/galvo/galvo.cpp
-    ~/remedios/ander/laser_zenturm_extract.cpp
-    ~/remedios/ander/laser_zenturm_extract.hpp
+    #~/remedios/ander/laser_zenturm_extract.cpp
+    #~/remedios/ander/laser_zenturm_extract.hpp
 
     # outside
     ~/buendia/galvo_control/galvo_control.cpp

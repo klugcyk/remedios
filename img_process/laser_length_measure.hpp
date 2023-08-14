@@ -16,7 +16,6 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
-#include "ander/laser_zenturm_extract.hpp"
 #include "galvo/galvo.hpp"
 #include "math/geometry.hpp"
 
@@ -25,9 +24,9 @@
 #define laser_length_measure_print_error_info
 #define laser_length_measure_save_process
 //#define laser_length_measure_cheak
-#define calibrate_img_required 25 //标定所需图片数量
+#define calibrate_img_required 30 //标定所需图片数量
 
-class laser_length_measure:public galvo,public laser_zenturm_extract
+class laser_length_measure:public galvo//,public laser_zenturm_extract
 {
 public:
     laser_length_measure();
@@ -46,11 +45,11 @@ protected:
 
 protected:
     cv::Point3f zenturm_coordinate; //激光中心坐标
-    math_geometry::geo_line_param laser_line; // 标定出射激光线在相机坐标系中的方程参数
+    mathGeometry::geoLineParam laser_line; // 标定出射激光线在相机坐标系中的方程参数
 
 private:
     void calculate_line(double point_array[10][3]);
-    void calculate_line(double point_array[10][3],math_geometry::geo_line_param &line);
+    void calculate_line(double point_array[10][3],mathGeometry::geoLineParam &line);
     std::vector<cv::Mat> camera_calibrate(std::vector<cv::Mat> img_vector);
 
 private:

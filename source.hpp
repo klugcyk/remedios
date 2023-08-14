@@ -3,7 +3,7 @@
     author:klug
     献给我的心上人等待天使的妹妹，她的眼神常带月光
     start:230724
-    last:230724
+    last:230814
 */
 
 #pragma once // 只编译一次
@@ -13,9 +13,6 @@
 
 #include <string>
 #include <mutex>
-
-extern bool link_update;
-extern bool richt_update;
 
 #define read_img_path "/home/klug/img/lengthMeasure/"
 #define read_img_path_cal "/home/klug/img/lengthMeasure/cal/"
@@ -29,6 +26,9 @@ extern bool richt_update;
 #define cal_img_num 30 //加载标定图片的数量
 #define laserLineCnt 16 //结构光硬件上光线的条数
 
+extern bool calDone;
 extern bool camera_continue_switch;
+extern bool link_update;
+extern bool richt_update;
 
 #endif //source_hpp

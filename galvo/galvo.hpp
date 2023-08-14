@@ -27,30 +27,30 @@ public:
 public:
 
 protected:
-    void galvo_calibrate(math_geometry::geo_line_param shoot); //振镜标定
-    math_geometry::geo_line_param laser_line_shoot_galvo(float angle_ein,float angle_zwei);//计算在振镜坐标系下的直线方程
-    math_geometry::geo_line_param laser_line_shoot_camera(float angle_ein,float angle_zwei);//计算在相机坐标系下的直线方程
-    void galvo2camera(std::vector<cv::Point3f> point,std::vector<math_geometry::geo_line_param> line);
+    void galvo_calibrate(mathGeometry::geoLineParam shoot); //振镜标定
+    mathGeometry::geoLineParam laser_line_shoot_galvo(float angle_ein,float angle_zwei);//计算在振镜坐标系下的直线方程
+    mathGeometry::geoLineParam laser_line_shoot_camera(float angle_ein,float angle_zwei);//计算在相机坐标系下的直线方程
+    void galvo2camera(std::vector<cv::Point3f> point,std::vector<mathGeometry::geoLineParam> line);
 
 protected:
     cv::Point3f tran;
     float deviation_angel_ein; //振镜角度偏差
     float deviation_angel_zwei;
-    math_geometry::geo_line_param laser_source; //光源入射到第一振镜激光线的方向向量，振镜坐标系下，标定时用
-    math_geometry::geo_line_param laser_transmit; //激光线在两个振镜传递的方向向量，振镜坐标系下，标定时用
-    math_geometry::geo_line_param laser_shoot; //光源出射到到外部的方向向量,只在标定中使用，振镜坐标系下，标定时用
+    mathGeometry::geoLineParam laser_source; //光源入射到第一振镜激光线的方向向量，振镜坐标系下，标定时用
+    mathGeometry::geoLineParam laser_transmit; //激光线在两个振镜传递的方向向量，振镜坐标系下，标定时用
+    mathGeometry::geoLineParam laser_shoot; //光源出射到到外部的方向向量,只在标定中使用，振镜坐标系下，标定时用
 
 private:
     void get_panel(cv::Point3f p1,cv::Point3f p2,cv::Point3f p3,float &a,float &b,float &c,float &d);
-    cv::Point3f line_plane_intersection(math_geometry::geo_line_param line,math_geometry::geo_plane_param plane);
-    math_geometry::geo_line_param laser_reflect(math_geometry::geo_line_param ld,math_geometry::geo_plane_param plane);
-    math_geometry::geo_plane_param plane_rotate(math_geometry::geo_plane_param plane,math_geometry::geo_line_param line,float angle);
+    cv::Point3f line_plane_intersection(mathGeometry::geoLineParam line,mathGeometry::geoPlaneParam plane);
+    mathGeometry::geoLineParam laser_reflect(mathGeometry::geoLineParam ld,mathGeometry::geoPlaneParam plane);
+    mathGeometry::geoPlaneParam plane_rotate(mathGeometry::geoPlaneParam plane,mathGeometry::geoLineParam line,float angle);
 
 private:
-    math_geometry::geo_line_param axia_ein; //第一振镜旋转轴线
-    math_geometry::geo_line_param axia_zwei; //第二振镜旋转轴线
-    math_geometry::geo_plane_param ein_galvo_plane; //第一振镜平面参数，0度
-    math_geometry::geo_plane_param zwei_galvo_plane; //第二振镜平面参数，0度
+    mathGeometry::geoLineParam axia_ein; //第一振镜旋转轴线
+    mathGeometry::geoLineParam axia_zwei; //第二振镜旋转轴线
+    mathGeometry::geoPlaneParam ein_galvo_plane; //第一振镜平面参数，0度
+    mathGeometry::geoPlaneParam zwei_galvo_plane; //第二振镜平面参数，0度
 
 };
 

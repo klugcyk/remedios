@@ -3,7 +3,7 @@
     author:klug
     献给美人儿蕾梅黛丝
     start:230427
-    last:230724
+    last:230814
 */
 
 #include "mainwindow.h"
@@ -11,6 +11,7 @@
 #include "img_process/laser_length_measure.hpp"
 #include "camera/camera.hpp"
 #include "ui_control/einlengthmeasure.h"
+#include "source.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,56 +20,60 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("laser_length_measure");
 
-    //system calibration
-    std::vector<cv::Mat> cal_img;
-    std::vector<cv::Mat> laser_img;
-    //load the image from the path
-    int cal_img_cnt=30;//加载图片的数量
-    for(int i=1;i<=cal_img_cnt;i++)
+    if(!calDone)
     {
-        std::string path="/home/klug/img/length_measure/";
-        path+=std::to_string(i);
-        path+=".png";
-        cv::Mat temp_img=imread(path);
-        if(!temp_img.empty())
-        {
-            cal_img.push_back(temp_img);
-        }
-    }
+        //system calibration
+        std::vector<cv::Mat> cal_img;
+        std::vector<cv::Mat> laser_img;
 
-    for(int i=101;i<=112;i++)
-    {
-        std::string path="/home/klug/img/length_measure/";
-        path+=std::to_string(i);
-        path+=".png";
-        cv::Mat _img=imread(path);
-        cv::Mat undistort_img;
-        cv::undistort(_img,undistort_img,cameraMatrix,distCoeffs);
-#ifdef laser_length_measure_save_process
-        std::string path_="/home/klug/img/res/undistort"+std::to_string(i);
-        path_+=".png";
-        cv::imwrite(path_,undistort_img);
-#endif
-        if(!_img.empty())
+        //load the image from the path 20 for camera 10 for laser line
+        int cal_img_cnt=30;//加载图片的数量
+        for(int i=1;i<=cal_img_cnt;i++)
         {
-            laser_img.push_back(_img);
+            std::string path="/home/klug/img/lengthMeasure/cal/";
+            path+=std::to_string(i);
+            path+=".png";
+            cv::Mat temp_img=imread(path);
+            if(!temp_img.empty())
+            {
+                cal_img.push_back(temp_img);
+            }
+        }
+
+        for(int i=101;i<=110;i++)
+        {
+            std::string path="/home/klug/img/lengthMeasure/cal/";
+            path+=std::to_string(i);
+            path+=".png";
+            cv::Mat _img=imread(path);
+            cv::Mat undistort_img;
+            cv::undistort(_img,undistort_img,cameraMatrix,distCoeffs);
+#ifdef laser_length_measure_save_process
+            std::string path_="/home/klug/img/lengthMeasure/undistort/"+std::to_string(i);
+            path_+=".png";
+            cv::imwrite(path_,undistort_img);
+#endif
+            if(!_img.empty())
+            {
+                laser_img.push_back(_img);
+            }
+            else
+            {
+                std::cout<<"img "
+                         << i
+                         <<" not find"
+                         <<std::endl;
+            }
+        }
+
+        if(cal_img.size()!=cal_img_cnt)
+        {
+            return;
         }
         else
         {
-            std::cout<<"img "
-                     << i
-                     <<" not find"
-                     <<std::endl;
+            system_calibrate(cal_img,laser_img);
         }
-    }
-
-    if(cal_img.size()!=cal_img_cnt)
-    {
-        return;
-    }
-    else
-    {
-        system_calibrate(cal_img,laser_img);
     }
 }
 
@@ -92,7 +97,8 @@ void MainWindow::on_grab_clicked()
 void MainWindow::on_grab_clicked()
 {
     camera_grab_rgb();
-
+    cv::Mat img=cv::imread("/home/klug/img/cam_img.png");
+    res_show(img);
 }
 
 #endif
@@ -123,7 +129,7 @@ void MainWindow::on_save_clicked()
     QString name;
     QString num_;
     num_=QString::fromStdString(num);
-    n="/home/klug/img/length_measure/";
+    n="/home/klug/img/lengthMeasure/";
     n+=std::to_string(i);
     n+=".png";
     name=QString::fromStdString(n);
@@ -131,7 +137,7 @@ void MainWindow::on_save_clicked()
 
 void MainWindow::on_measure_clicked()
 {
-    std::string img_path="/home/klug/img/length_measure/";
+    std::string img_path="/home/klug/img/lengthMeasure/";
     std::string img_num=ui->img_name->text().toStdString();
     img_path+=img_num;
     img_path+=".png";

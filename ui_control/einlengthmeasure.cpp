@@ -3,7 +3,7 @@
     author:klug
     献给我的弟弟奥雷里亚诺第二
     start:230724
-    last:230724
+    last:230814
 */
 
 #include "einlengthmeasure.h"
@@ -43,13 +43,16 @@ void einLengthMeasure::imgShow()
 
 void einLengthMeasure::on_grab_clicked()
 {
-    grabImg=camera_grab_rgb_return();
-    imgShow();
+    camera_grab_rgb();
+    cv::Mat img=cv::imread("/home/klug/img/cam_img.png");
+    cv::cvtColor(img,img,cv::COLOR_BGR2RGB);
+    imgShow(img);
 }
 
 void einLengthMeasure::on_save_clicked()
 {
-    if(!grabImg.empty())
+    cv::Mat img=cv::imread("/home/klug/img/cam_img.png");
+    if(!img.empty())
     {
         std::string name=write_img_path;
         if(ui->forCal->isChecked())
@@ -59,20 +62,28 @@ void einLengthMeasure::on_save_clicked()
         name+=std::to_string(ui->imgName->text().toInt());
         name+=".png";
 
-        cv::imwrite(name,grabImg);
+        cv::imwrite(name,img);
     }
 }
 
 void einLengthMeasure::on_measure_clicked()
 {
     grabImg=camera_grab_rgb_return();
-    float l=lengthCalculate(grabImg);
+    float l=length_measure_base(grabImg);
     ui->length->setText(QString::number(l,'f',5));
 }
 
 void einLengthMeasure::on_func_clicked()
 {
-    cv::Mat img=cv::imread("/home/klug/img/length_measure/1.png");
-    imgShow(img);
+    std::string path="/home/klug/img/lengthMeasure/";
+    path+=std::to_string(ui->imgName->text().toInt());
+    path+=".bmp";
+    cv::Mat img=cv::imread(path);
+    if(img.empty())
+    {
+        return;
+    }
+    cv::Point2f zenturm;
+    zenturmExtract(img,zenturm);
 }
 

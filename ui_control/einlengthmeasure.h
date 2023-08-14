@@ -3,7 +3,7 @@
     author:klug
     献给我的弟弟奥雷里亚诺第二
     start:230724
-    last:230724
+    last:230814
 */
 
 #ifndef EINLENGTHMEASURE_H
@@ -11,18 +11,18 @@
 
 #include <QDockWidget>
 #include "img_process/zenturmExtract.hpp"
-#include "img_process/laserLengthMeasure.hpp"
+#include "img_process/laser_length_measure.hpp"
 #include <opencv2/opencv.hpp>
 #include "camera/camera.hpp"
 
-#define imgShowDivide 2 //显示在窗口上图像缩小比例
+#define imgShowDivide 4 //显示在窗口上图像缩小比例
 
 namespace Ui {
 class einLengthMeasure;
 }
 
 class einLengthMeasure : public QDockWidget,
-        public lengthMeasure::laserLengthMeasure,
+        public laser_length_measure,
         public basler_camera
 {
     Q_OBJECT
@@ -35,7 +35,6 @@ private slots:
     void on_grab_clicked();
     void on_save_clicked();
     void on_measure_clicked();
-
     void on_func_clicked();
 
 private:

@@ -1,6 +1,6 @@
 # 献给在桂电读研的美人儿蕾梅黛丝
 
-# opencv 4.5.0 required
+# opencv required
 
 # basler camera lib use
 
@@ -8,11 +8,7 @@
 
 # buendia required 
 
-git clone https://gitee.com/klug/buendia.git
-
-# sakura required
-
-git clone https://gitee.com/klug/sakura.git
+git clone https://github.com/klugcyk/buendia.git
 
 * 控制振镜需要配置电脑ip为192.168.1.11
 

@@ -74,10 +74,10 @@ galvo::~galvo()
     迭代寻找最优的角度偏移值
     @shoot:出射光线直线方程参数，用标定板计算得到的
 */
-void galvo::galvo_calibrate(math_geometry::geo_line_param shoot)
+void galvo::galvo_calibrate(mathGeometry::geoLineParam shoot)
 {
     float step=0.0001;
-    math_geometry::geo_plane_param ein_reflect_plane,zwei_reflect_plane; //旋转后的两个振镜平面
+    mathGeometry::geoPlaneParam ein_reflect_plane,zwei_reflect_plane; //旋转后的两个振镜平面
     float error_buf=1000;
     float shoot_length=sqrt(shoot.a*shoot.a+shoot.b*shoot.b+shoot.c*shoot.c);
 
@@ -129,7 +129,7 @@ void galvo::galvo_calibrate(math_geometry::geo_line_param shoot)
     @plane:输入平面方程的参数
     @intersection:返回值，交点的坐标
 */
-cv::Point3f galvo::line_plane_intersection(math_geometry::geo_line_param line,math_geometry::geo_plane_param plane)
+cv::Point3f galvo::line_plane_intersection(mathGeometry::geoLineParam line,mathGeometry::geoPlaneParam plane)
 {
     cv::Point3f intersection;
 
@@ -150,9 +150,9 @@ cv::Point3f galvo::line_plane_intersection(math_geometry::geo_line_param line,ma
     @plane:反射平面
     @lr:返回值，出射光直线方程方向
 */
-math_geometry::geo_line_param galvo::laser_reflect(math_geometry::geo_line_param ld,math_geometry::geo_plane_param plane)
+mathGeometry::geoLineParam galvo::laser_reflect(mathGeometry::geoLineParam ld,mathGeometry::geoPlaneParam plane)
 {
-    math_geometry::geo_line_param lr;
+    mathGeometry::geoLineParam lr;
 
     float length_ld=sqrt(ld.a*ld.a+ld.b*ld.b+ld.c*ld.c);
     float length_plane=sqrt(plane.A*plane.A+plane.B*plane.B+plane.C*plane.C);
@@ -213,9 +213,9 @@ math_geometry::geo_line_param galvo::laser_reflect(math_geometry::geo_line_param
     @angle:旋转角度
     @res_plane:返回值，旋转后平面
 */
-math_geometry::geo_plane_param galvo::plane_rotate(math_geometry::geo_plane_param plane,math_geometry::geo_line_param line,float angle)
+mathGeometry::geoPlaneParam galvo::plane_rotate(mathGeometry::geoPlaneParam plane,mathGeometry::geoLineParam line,float angle)
 {
-    math_geometry::geo_plane_param res_plane;
+    mathGeometry::geoPlaneParam res_plane;
 
     float judge=(plane.A*line.a+plane.B*line.b+plane.C*line.c)/(sqrt(line.a*line.a+line.b*line.b+line.c*line.c)*sqrt(plane.A*plane.A+plane.B*plane.B+plane.C*plane.C));
     if(judge>0.001)
@@ -283,10 +283,10 @@ math_geometry::geo_plane_param galvo::plane_rotate(math_geometry::geo_plane_para
     @angle_zwei:第二振镜角度
     @laser_line:返回值，出射激光线的直线方程
 */
-math_geometry::geo_line_param galvo::laser_line_shoot_galvo(float angle_ein,float angle_zwei)
+mathGeometry::geoLineParam galvo::laser_line_shoot_galvo(float angle_ein,float angle_zwei)
 {
-    math_geometry::geo_plane_param plane_temp1=plane_rotate(ein_galvo_plane,axia_ein,angle_ein+deviation_angel_ein);
-    math_geometry::geo_plane_param plane_temp2=plane_rotate(zwei_galvo_plane,axia_zwei,angle_zwei+deviation_angel_zwei);
+    mathGeometry::geoPlaneParam plane_temp1=plane_rotate(ein_galvo_plane,axia_ein,angle_ein+deviation_angel_ein);
+    mathGeometry::geoPlaneParam plane_temp2=plane_rotate(zwei_galvo_plane,axia_zwei,angle_zwei+deviation_angel_zwei);
 
     laser_transmit=laser_reflect(laser_source,plane_temp1);
     laser_shoot=laser_reflect(laser_transmit,plane_temp2);
@@ -309,13 +309,13 @@ math_geometry::geo_line_param galvo::laser_line_shoot_galvo(float angle_ein,floa
     @angle_zwei:第二振镜角度
     @laser_line:返回值，出射激光线的直线方程
 */
-math_geometry::geo_line_param galvo::laser_line_shoot_camera(float angle_ein,float angle_zwei)
+mathGeometry::geoLineParam galvo::laser_line_shoot_camera(float angle_ein,float angle_zwei)
 {
-    math_geometry::geo_line_param shoot_line,line_temp;
+    mathGeometry::geoLineParam shoot_line,line_temp;
 
     // 计算旋转后的出射光线
-    math_geometry::geo_plane_param plane_temp1=plane_rotate(ein_galvo_plane,axia_ein,angle_ein+deviation_angel_ein);
-    math_geometry::geo_plane_param plane_temp2=plane_rotate(zwei_galvo_plane,axia_zwei,angle_zwei+deviation_angel_zwei);
+    mathGeometry::geoPlaneParam plane_temp1=plane_rotate(ein_galvo_plane,axia_ein,angle_ein+deviation_angel_ein);
+    mathGeometry::geoPlaneParam plane_temp2=plane_rotate(zwei_galvo_plane,axia_zwei,angle_zwei+deviation_angel_zwei);
 
     line_temp=laser_reflect(laser_source,plane_temp1);
     shoot_line=laser_reflect(line_temp,plane_temp2);
@@ -362,7 +362,7 @@ void galvo::get_panel(cv::Point3f p1,cv::Point3f p2,cv::Point3f p3,float &a,floa
     @line:振镜坐标系下，两条直线的方程，根据振镜角度算出
     @tran:两个坐标系之间的偏差，定义在振镜的类中
 */
-void galvo::galvo2camera(std::vector<cv::Point3f> point,std::vector<math_geometry::geo_line_param> line)
+void galvo::galvo2camera(std::vector<cv::Point3f> point,std::vector<mathGeometry::geoLineParam> line)
 {
     //首先判断容器中数据量是否正确
     if(point.size()!=2&&line.size()!=2)

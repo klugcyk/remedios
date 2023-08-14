@@ -271,7 +271,7 @@ int laser_length_measure::system_calibrate(std::vector<cv::Mat> cal_img)
 
     // 标定振镜坐标系和相机坐标系之间的偏差
     std::vector<cv::Point3f> galvo_camera_point;
-    std::vector<math_geometry::geo_line_param> galvo_camera_line;
+    std::vector<mathGeometry::geoLineParam> galvo_camera_line;
 
     //标定振镜和相机偏差计算点坐标
     cv::Point2f p2;
@@ -295,7 +295,7 @@ int laser_length_measure::system_calibrate(std::vector<cv::Mat> cal_img)
     galvo_camera_point.push_back(p3);
 
     //标定振镜和相机偏差计算出射激光线方程
-    math_geometry::geo_line_param l1=laser_line_shoot_galvo(-1/57.32,1/57.32);
+    mathGeometry::geoLineParam l1=laser_line_shoot_galvo(-1/57.32,1/57.32);
     galvo_camera_line.push_back(l1);
     l1=laser_line_shoot_galvo(-1/57.32,0);
     galvo_camera_line.push_back(l1);
@@ -374,7 +374,7 @@ int laser_length_measure::system_calibrate(std::vector<cv::Mat> cal_img,std::vec
         cv::Point2f p;
         laser_zenturm_caltest(laser_point_img[i-20],p);//计算激光中心点
 #ifdef laser_length_measure_save_process
-        std::string path="/home/klug/img/res/zenturm_";
+        std::string path="/home/klug/img/lengthMeasure/res/zenturm_";
         path+=std::to_string(i-20);
         path+=".png";
         cv::imwrite(path,laser_point_img[i-20]);
@@ -399,14 +399,14 @@ int laser_length_measure::system_calibrate(std::vector<cv::Mat> cal_img,std::vec
 
     // 标定振镜坐标系和相机坐标系之间的偏差
     std::vector<cv::Point3f> galvo_camera_point;
-    std::vector<math_geometry::geo_line_param> galvo_camera_line;
+    std::vector<mathGeometry::geoLineParam> galvo_camera_line;
 
     //标定振镜和相机偏差计算点坐标
     cv::Point2f p2;
     cv::Point3f p3;
     laser_zenturm_caltest(laser_point_img[10],p2);//计算激光中心点
 #ifdef laser_length_measure_save_process
-    cv::imwrite("/home/klug/img/res/zenturm_11.png",laser_point_img[10]);
+    cv::imwrite("/home/klug/img/lengthMeasure/res/zenturm_11.png",laser_point_img[10]);
 #endif
     p3.x=(p2.x-cal_u)/cal_fx*extrinsics[29].at<double>(2,3); //根据最后一张标定板计算x u*z=fx*x+u0*z
     p3.y=(p2.y-cal_v)/cal_fy*extrinsics[29].at<double>(2,3); //根据最后一张标定板计算y
@@ -415,7 +415,7 @@ int laser_length_measure::system_calibrate(std::vector<cv::Mat> cal_img,std::vec
 
     laser_zenturm_caltest(laser_point_img[11],p2);
 #ifdef laser_length_measure_save_process
-    cv::imwrite("/home/klug/img/res/zenturm_12.png",laser_point_img[11]);
+    cv::imwrite("/home/klug/img/lengthMeasure/res/zenturm_12.png",laser_point_img[11]);
 #endif
     p3.x=(p2.x-cal_u)/cal_fx*extrinsics[29].at<double>(2,3);
     p3.y=(p2.y-cal_v)/cal_fy*extrinsics[29].at<double>(2,3);
@@ -423,7 +423,7 @@ int laser_length_measure::system_calibrate(std::vector<cv::Mat> cal_img,std::vec
     galvo_camera_point.push_back(p3);
 
     //标定振镜和相机偏差计算出射激光线方程
-    math_geometry::geo_line_param l1=laser_line_shoot_galvo(-1/57.32,1/57.32);
+    mathGeometry::geoLineParam l1=laser_line_shoot_galvo(-1/57.32,1/57.32);
     galvo_camera_line.push_back(l1);
     l1=laser_line_shoot_galvo(-1/57.32,0);
     galvo_camera_line.push_back(l1);
@@ -504,7 +504,7 @@ void laser_length_measure::calculate_line(double point_array[10][3])
     计算出射激光线方程，利用最小二乘法，计算出的结果为两个平面的交线
     @point_array:点坐标
 */
-void laser_length_measure::calculate_line(double point_array[10][3],math_geometry::geo_line_param &line)
+void laser_length_measure::calculate_line(double point_array[10][3],mathGeometry::geoLineParam &line)
 {
     int n=10;
     double sum_z=0;
@@ -618,7 +618,7 @@ void laser_length_measure::laser_zenturm_caltest(cv::Mat &src_img,cv::Point2f &z
     cv::cvtColor(src_img,src_img,cv::COLOR_BGR2GRAY);
     threshold(src_img,bin_img,150,255,cv::THRESH_BINARY);
 #ifdef laser_length_measure_save_process
-    imwrite("/home/klug/img/length_measure/res/bin.png",bin_img);
+    imwrite("/home/klug/img/lengthMeasure/res/bin.png",bin_img);
 #endif
     int u_sum=0;
     int v_sum=0;
@@ -650,7 +650,7 @@ void laser_length_measure::laser_zenturm_caltest(cv::Mat &src_img,cv::Point2f &z
     }
 
 #ifdef laser_length_measure_save_process
-    imwrite("/home/klug/img/length_measure/res/mark_src.png",src_img);
+    imwrite("/home/klug/img/lengthMeasure/res/mark_src.png",src_img);
 #endif
 }
 
@@ -665,7 +665,7 @@ double laser_length_measure::length_measure(cv::Mat src_img,double angle_ein,dou
 {
     double length=0.0;
 
-    math_geometry::geo_line_param line;
+    mathGeometry::geoLineParam line;
     //line=laser_line_shoot(angle_ein,angle_zwei);
     line=laser_line_shoot_camera(angle_ein,angle_zwei);
 
