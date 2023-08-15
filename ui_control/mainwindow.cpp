@@ -3,7 +3,7 @@
     author:klug
     献给美人儿蕾梅黛丝
     start:230427
-    last:230814
+    last:230815
 */
 
 #include "mainwindow.h"
@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("laser_length_measure");
 
+    //calDone=1;
+
     if(!calDone)
     {
         //system calibration
@@ -27,10 +29,10 @@ MainWindow::MainWindow(QWidget *parent)
         std::vector<cv::Mat> laser_img;
 
         //load the image from the path 20 for camera 10 for laser line
-        int cal_img_cnt=30;//加载图片的数量
+        int cal_img_cnt=35;//加载图片的数量
         for(int i=1;i<=cal_img_cnt;i++)
         {
-            std::string path="/home/klug/img/lengthMeasure/cal/";
+            std::string path=cal_img_path;
             path+=std::to_string(i);
             path+=".png";
             cv::Mat temp_img=imread(path);
@@ -42,14 +44,14 @@ MainWindow::MainWindow(QWidget *parent)
 
         for(int i=101;i<=110;i++)
         {
-            std::string path="/home/klug/img/lengthMeasure/cal/";
+            std::string path=cal_img_path;
             path+=std::to_string(i);
             path+=".png";
             cv::Mat _img=imread(path);
             cv::Mat undistort_img;
             cv::undistort(_img,undistort_img,cameraMatrix,distCoeffs);
 #ifdef laser_length_measure_save_process
-            std::string path_="/home/klug/img/lengthMeasure/undistort/"+std::to_string(i);
+            std::string path_=undistort_img_path+std::to_string(i);
             path_+=".png";
             cv::imwrite(path_,undistort_img);
 #endif
@@ -72,7 +74,8 @@ MainWindow::MainWindow(QWidget *parent)
         }
         else
         {
-            system_calibrate(cal_img,laser_img);
+            systemCalibrate(cal_img,laser_img);
+            calDone=1;
         }
     }
 }
@@ -130,9 +133,18 @@ void MainWindow::on_save_clicked()
     QString num_;
     num_=QString::fromStdString(num);
     n="/home/klug/img/lengthMeasure/";
+    if(ui->forCal->isChecked())
+    {
+        n+="cal/";
+    }
     n+=std::to_string(i);
     n+=".png";
-    name=QString::fromStdString(n);
+
+    cv::Mat img=cv::imread("/home/klug/img/cam_img.png");
+    if(!img.empty())
+    {
+        cv::imwrite(n,img);
+    }
 }
 
 void MainWindow::on_measure_clicked()
@@ -144,20 +156,14 @@ void MainWindow::on_measure_clicked()
 
     cv::Mat img=imread(img_path);
 
-    float _ein=0;
-    float _zwei=0;
-
-    _ein=ui->galvo_1->text().toFloat();
-    _zwei=ui->galvo_2->text().toFloat();
-
     if(!img.empty())
     {
-        double length=length_measure(img,_ein/57.32,_zwei/57.32);
+        double length=lengthMeasure(img);
         QString str = QString::number(length,'f',3);
         ui->distance->setText(str);
     }
 }
-
+/*
 void MainWindow::on_galvo_read_clicked()
 {
     galvo_read();
@@ -175,7 +181,7 @@ void MainWindow::on_galvo_rotate_clicked()
     angle1=ui->galvo_1->text().toFloat();
     angle2=ui->galvo_2->text().toFloat();
     galvo_rotate(angle1,angle2);
-}
+}*/
 
 void MainWindow::res_show(cv::Mat &res_img)
 {
@@ -185,11 +191,5 @@ void MainWindow::res_show(cv::Mat &res_img)
     ui->img_continue->setPixmap(QPixmap::fromImage(qimg));
     ui->img_continue->resize(qimg.size());
     ui->img_continue->show();
-}
-
-void MainWindow::on_einMeasure_clicked()
-{
-    einLengthMeasure *new_win = new einLengthMeasure;
-    new_win->show();
 }
 

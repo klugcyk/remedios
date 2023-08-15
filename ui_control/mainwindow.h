@@ -3,7 +3,7 @@
     author:klug
     献给我的心上人等待天使的妹妹
     start:230427
-    last:230724
+    last:230815
 */
 
 #ifndef MAINWINDOW_H
@@ -11,9 +11,7 @@
 
 #include <QMainWindow>
 #include "camera/camera.hpp"
-#include "img_process/laser_length_measure.hpp"
-#include "galvo_control/galvo_control.hpp"
-#include "galvo/galvo.hpp"
+#include "img_process/laserLengthMeasure.hpp"
 
 // 使用相机类型
 #define camera_rgb
@@ -23,9 +21,9 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow,public laser_length_measure
-        ,public basler_camera,
-        public galvo_control
+class MainWindow : public QMainWindow,
+        public laserLengthMeasure,
+        public basler_camera
 {
     Q_OBJECT
 public:
@@ -42,10 +40,9 @@ private slots:
     void on_save_clicked();
     void on_set_param_clicked();
     void on_read_param_clicked();
-    void on_galvo_read_clicked();
-    void on_galvo_rotate_clicked();
+    //void on_galvo_read_clicked();
+    //void on_galvo_rotate_clicked();
     void on_measure_clicked();
-    void on_einMeasure_clicked();
 
 private:
     Ui::MainWindow *ui;

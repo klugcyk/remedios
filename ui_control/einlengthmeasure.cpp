@@ -69,7 +69,7 @@ void einLengthMeasure::on_save_clicked()
 void einLengthMeasure::on_measure_clicked()
 {
     grabImg=camera_grab_rgb_return();
-    float l=length_measure_base(grabImg);
+    float l=lengthMeasure(grabImg);
     ui->length->setText(QString::number(l,'f',5));
 }
 

@@ -26,7 +26,7 @@
 //#define laser_length_measure_cheak
 #define calibrate_img_required 30 //标定所需图片数量
 
-class laser_length_measure:public galvo//,public laser_zenturm_extract
+class laser_length_measure//:public galvo,public laser_zenturm_extract
 {
 public:
     laser_length_measure();
@@ -37,6 +37,7 @@ public:
 protected:   
     int system_calibrate(std::vector<cv::Mat> cal_img);
     int system_calibrate(std::vector<cv::Mat> cal_img,std::vector<cv::Mat> laser_point_img);
+    int base_calibrate(std::vector<cv::Mat> cal_img,std::vector<cv::Mat> laser_point_img);
     void laser_zenturm_caltest(cv::Mat &src_img,cv::Point2f &zenturm);
     double length_measure(cv::Mat src_img,double angle_ein,double angle_zwei); // 根据振镜的角度计算距离
     double length_measure_base(cv::Mat src_img);

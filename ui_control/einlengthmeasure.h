@@ -11,7 +11,7 @@
 
 #include <QDockWidget>
 #include "img_process/zenturmExtract.hpp"
-#include "img_process/laser_length_measure.hpp"
+#include "img_process/laserLengthMeasure.hpp"
 #include <opencv2/opencv.hpp>
 #include "camera/camera.hpp"
 
@@ -22,7 +22,7 @@ class einLengthMeasure;
 }
 
 class einLengthMeasure : public QDockWidget,
-        public laser_length_measure,
+        public laserLengthMeasure,
         public basler_camera
 {
     Q_OBJECT

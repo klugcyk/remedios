@@ -2,7 +2,7 @@
 # author:klug
 # 献给美人儿蕾梅黛丝
 # start:230521
-# last:230814
+# last:230815
 
 cmake_minimum_required(VERSION 3.5)
 
@@ -50,34 +50,36 @@ set(PROJECT_SOURCES
     ~/remedios/ui_control/mainwindow.cpp
     ~/remedios/ui_control/mainwindow.h
     ~/remedios/ui_control/mainwindow.ui
-    ~/remedios/ui_control/einlengthmeasure.cpp
-    ~/remedios/ui_control/einlengthmeasure.h
-    ~/remedios/ui_control/einlengthmeasure.ui
+    #~/remedios/ui_control/einlengthmeasure.cpp
+    #~/remedios/ui_control/einlengthmeasure.h
+    #~/remedios/ui_control/einlengthmeasure.ui
 
     # algorithm
-    ~/remedios/img_process/laser_length_measure.cpp
-    ~/remedios/img_process/laser_length_measure.hpp
-    #~/remedios/img_process/laserLengthMeasure.cpp
-    #~/remedios/img_process/laserLengthMeasure.hpp
+    #~/remedios/img_process/laser_length_measure.cpp
+    #~/remedios/img_process/laser_length_measure.hpp
+    ~/remedios/img_process/laserLengthMeasure.cpp
+    ~/remedios/img_process/laserLengthMeasure.hpp
     ~/remedios/img_process/zenturmExtract.cpp
     ~/remedios/img_process/zenturmExtract.hpp
-    ~/remedios/galvo/galvo.hpp
-    ~/remedios/galvo/galvo.cpp
+    #~/remedios/galvo/galvo.hpp
+    #~/remedios/galvo/galvo.cpp
     #~/remedios/ander/laser_zenturm_extract.cpp
     #~/remedios/ander/laser_zenturm_extract.hpp
 
     # outside
-    ~/buendia/galvo_control/galvo_control.cpp
-    ~/buendia/galvo_control/galvo_control.hpp
-    ~/buendia/socket/socket.cpp
-    ~/buendia/socket/socket.hpp
-    ~/buendia/galvo_control/Crc16Class.cpp
-    ~/buendia/galvo_control/Crc16Class.h
+    #~/buendia/galvo_control/galvo_control.cpp
+    #~/buendia/galvo_control/galvo_control.hpp
+    #~/buendia/socket/socket.cpp
+    #~/buendia/socket/socket.hpp
+    #~/buendia/galvo_control/Crc16Class.cpp
+    #~/buendia/galvo_control/Crc16Class.h
     ~/buendia/camera/camera.cpp
     ~/buendia/camera/camera.hpp
+    ~/undb/cameraGene/cameraGene.cpp
+    ~/undb/cameraGene/cameraGene.hpp
+    #~/undb/math/least_sqaure.cpp
+    #~/undb/math/least_sqaure.hpp
 
-    #~/klug/vortex/math/least_sqaure.cpp
-    #~/klug/vortex/math/least_sqaure.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -501,6 +501,80 @@ void laser_length_measure::calculate_line(double point_array[10][3])
 }
 
 /*
+    相机和激光中心点标定
+    @cal_img:棋盘格标定图片
+    @laser_point_img:激光中心点图片
+    @return:标定状态
+*/
+int laser_length_measure::base_calibrate(std::vector<cv::Mat> cal_img,std::vector<cv::Mat> laser_point_img)
+{
+    //标定相机
+    if(cal_img.size()<=calibrate_img_required)
+    {
+#ifdef laser_length_measure_print_error_info
+        printf("the img is not enough!!!\n");
+#endif
+        return -1;
+    }
+
+    std::vector<cv::Mat> extrinsics=camera_calibrate(cal_img);
+#ifdef laser_length_measure_print_data_info
+    for(int i=20;i<extrinsics.size();i++)
+    {
+        printf("z(%d):=%f\n",i,extrinsics[i].at<double>(2,3));
+    }
+#endif
+    double cal_u=cameraMatrix.at<double>(0,2);
+    double cal_v=cameraMatrix.at<double>(1,2);
+    double cal_fx=cameraMatrix.at<double>(0,0);
+    double cal_fy=cameraMatrix.at<double>(1,1);
+
+#ifdef laser_length_measure_print_data_info
+    printf("img_size.col:=%d\n",cal_img[1].cols);
+    printf("img_size.row:=%d\n",cal_img[1].rows);
+    printf("cal_u:=%f\n",cal_u);
+    printf("cal_v:=%f\n",cal_v);
+    printf("cal_fx:=%f\n",cal_fx);
+    printf("cal_fy:=%f\n",cal_fy);
+#endif
+
+    if(laser_point_img.size()!=12)
+    {
+        return -2;
+    }
+
+    double xyz_array[10][3]; //保存距离信息
+    //cal_img中第20-30张图片用于距离标定
+    for(size_t i=20;i<30;i++)
+    {
+        cv::Point2f p;
+        laser_zenturm_caltest(laser_point_img[i-20],p);//计算激光中心点
+#ifdef laser_length_measure_save_process
+        std::string path="/home/klug/img/lengthMeasure/res/zenturm_";
+        path+=std::to_string(i-20);
+        path+=".png";
+        cv::imwrite(path,laser_point_img[i-20]);
+#endif
+        xyz_array[i-20][0]=(p.x-cal_u)/cal_fx*extrinsics[i].at<double>(2,3); // x
+        xyz_array[i-20][1]=(p.y-cal_v)/cal_fy*extrinsics[i].at<double>(2,3); // y
+        xyz_array[i-20][2]=extrinsics[i].at<double>(2,3); // 从外参中读取标定板到相机坐标系的距离Z
+    }
+
+    // 计算激光线在相机坐标系下的方程
+    calculate_line(xyz_array);
+#ifdef laser_length_measure_print_data_info
+    printf("line in camera coordinate a %f\n",laser_line.a);
+    printf("line in camera coordinate b %f\n",laser_line.b);
+    printf("line in camera coordinate c %f\n",laser_line.c);
+    printf("line in camera coordinate x %f\n",laser_line.x0);
+    printf("line in camera coordinate y %f\n",laser_line.y0);
+    printf("line in camera coordinate z %f\n",laser_line.y0);
+#endif
+
+    return 1;
+}
+
+/*
     计算出射激光线方程，利用最小二乘法，计算出的结果为两个平面的交线
     @point_array:点坐标
 */
