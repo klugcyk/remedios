@@ -3,12 +3,12 @@
     author:klug
     献给美人儿蕾梅黛丝
     start:230427
-    last:230815
+    last:230816
 */
 
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include "img_process/laser_length_measure.hpp"
+#include "img_process/laserLengthMeasure.hpp"
 #include "camera/camera.hpp"
 #include "ui_control/einlengthmeasure.h"
 #include "source.hpp"
@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
         std::vector<cv::Mat> laser_img;
 
         //load the image from the path 20 for camera 10 for laser line
-        int cal_img_cnt=35;//加载图片的数量
+        /*int cal_img_cnt=30;//加载图片的数量
         for(int i=1;i<=cal_img_cnt;i++)
         {
             std::string path=cal_img_path;
@@ -40,21 +40,14 @@ MainWindow::MainWindow(QWidget *parent)
             {
                 cal_img.push_back(temp_img);
             }
-        }
+        }*/
 
-        for(int i=101;i<=110;i++)
+        for(int i=101;i<=104;i++)
         {
             std::string path=cal_img_path;
             path+=std::to_string(i);
             path+=".png";
             cv::Mat _img=imread(path);
-            cv::Mat undistort_img;
-            cv::undistort(_img,undistort_img,cameraMatrix,distCoeffs);
-#ifdef laser_length_measure_save_process
-            std::string path_=undistort_img_path+std::to_string(i);
-            path_+=".png";
-            cv::imwrite(path_,undistort_img);
-#endif
             if(!_img.empty())
             {
                 laser_img.push_back(_img);
@@ -68,15 +61,8 @@ MainWindow::MainWindow(QWidget *parent)
             }
         }
 
-        if(cal_img.size()!=cal_img_cnt)
-        {
-            return;
-        }
-        else
-        {
-            systemCalibrate(cal_img,laser_img);
-            calDone=1;
-        }
+        systemCalibrate(laser_img);
+        calDone=1;
     }
 }
 
@@ -137,6 +123,10 @@ void MainWindow::on_save_clicked()
     {
         n+="cal/";
     }
+    else
+    {
+        n+="measure/";
+    }
     n+=std::to_string(i);
     n+=".png";
 
@@ -158,7 +148,8 @@ void MainWindow::on_measure_clicked()
 
     if(!img.empty())
     {
-        double length=lengthMeasure(img);
+        //double length=lengthMeasure(img);
+        double length=lengthMeasureCrossRatio(img);
         QString str = QString::number(length,'f',3);
         ui->distance->setText(str);
     }

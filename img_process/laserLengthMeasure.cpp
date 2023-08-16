@@ -78,7 +78,7 @@ void laserLengthMeasure::calculate_line(double point_array[10][3],mathGeometry::
 */
 void laserLengthMeasure::systemCalibrate(std::vector<cv::Mat> imgArray,std::vector<cv::Mat> laserArray)
 {
-    if(imgArray.size()<35)
+    if(imgArray.size()<30)
     {
 #ifdef laserLengthMeasurePrintErrorInfo
         printf("ERROR:img not enough...");
@@ -86,15 +86,15 @@ void laserLengthMeasure::systemCalibrate(std::vector<cv::Mat> imgArray,std::vect
         return;
     }
 
+    double fx=cameraMatrix.at<double>(0,0);
+    double fy=cameraMatrix.at<double>(1,1);
+    double u0=cameraMatrix.at<double>(0,2);
+    double v0=cameraMatrix.at<double>(1,2);
+
     //相机标定
     board_size=cv::Size(8,11);
     square_size=cv::Size2f(5.00,5.00);
     cameraCalibrate(imgArray);
-
-    double u0=cameraMatrix.at<double>(0,2);
-    double v0=cameraMatrix.at<double>(1,2);
-    double fx=cameraMatrix.at<double>(0,0);
-    double fy=cameraMatrix.at<double>(1,1);
 
     //激光线标定
     //1 激光点坐标计算
@@ -113,6 +113,41 @@ void laserLengthMeasure::systemCalibrate(std::vector<cv::Mat> imgArray,std::vect
 
     //2 最小二乘法拟合直线
     calculate_line(pointArray,laserLine);
+
+#ifdef laserLengthMeasurePrintMsgInfo
+    printf("Achieve the system calibrate...\n");
+#endif
+}
+
+/*
+    交比方程标定
+    @imgArray:标定用图片，3张，0，10，20，30
+*/
+void laserLengthMeasure::systemCalibrate(std::vector<cv::Mat> laserArray)
+{
+    if(laserArray.size()!=4)
+    {
+#ifdef laserLengthMeasurePrintErrorInfo
+        printf("ERROR:img num not correct...");
+#endif
+        return;
+    }
+
+    //交比计算
+    for(size_t imgCnt=0;imgCnt<laserArray.size();imgCnt++)
+    {
+        cv::Point2f zt;
+        zenturmExtractCal(laserArray[imgCnt],zt);
+        pointArray[imgCnt][0]=zt.x;
+        pointArray[imgCnt][1]=zt.y;
+    }
+
+    //pointLength[0]=abs(pointArray[0][1]-pointArray[1][1]);
+    //pointLength[1]=abs(pointArray[2][1]-pointArray[1][1]);
+    //pointLength[2]=abs(pointArray[2][1]-pointArray[3][1]);
+
+    //crossRatio=(pointLength[1]*(pointLength[0]+pointLength[1]+pointLength[2]))/
+    //        ((pointLength[0]+pointLength[1])*(pointLength[2]+pointLength[1]));
 
 #ifdef laserLengthMeasurePrintMsgInfo
     printf("Achieve the system calibrate...\n");
@@ -142,20 +177,45 @@ float laserLengthMeasure::lengthMeasure(cv::Mat srcImg)
     double t3=laserLine.x0/laserLine.a;
     double t4=laserLine.y0/laserLine.b;
     length=(t3-t4)/(t1-t2);
-    //double temp1=laserLine.b*laserLine.x0-laserLine.a*laserLine.y0;
-    //double temp2=(zenturm.x-u0)*laserLine.b/fx;
-    //double temp3=(zenturm.y-v0)*laserLine.a/fy;
+    double temp1=laserLine.b*laserLine.x0-laserLine.a*laserLine.y0;
+    double temp2=(zenturm.x-u0)*laserLine.b/fx;
+    double temp3=(zenturm.y-v0)*laserLine.a/fy;
 
-    //length=temp1/(temp2-temp3);
+    length=temp1/(temp2-temp3);
 
-    //zenturmCoordinate.z=length;
-    //zenturmCoordinate.x=laserLine.a*(length-laserLine.z0)/laserLine.c+laserLine.x0;
-    //zenturmCoordinate.y=laserLine.b*(length-laserLine.z0)/laserLine.c+laserLine.y0;
+    zenturmCoordinate.z=length;
+    zenturmCoordinate.x=laserLine.a*(length-laserLine.z0)/laserLine.c+laserLine.x0;
+    zenturmCoordinate.y=laserLine.b*(length-laserLine.z0)/laserLine.c+laserLine.y0;
 
-    //length=sqrt(zenturmCoordinate.x*zenturmCoordinate.x+
-    //            zenturmCoordinate.y*zenturmCoordinate.y+
-    //            zenturmCoordinate.z*zenturmCoordinate.z);
+    length=sqrt(zenturmCoordinate.x*zenturmCoordinate.x+
+                zenturmCoordinate.y*zenturmCoordinate.y+
+                zenturmCoordinate.z*zenturmCoordinate.z);
 
     return length;
 }
 
+/*
+    交比不变计算距离
+    @srcImg:激光中心点图像
+*/
+float laserLengthMeasure::lengthMeasureCrossRatio(cv::Mat srcImg)
+{
+    cv::Point2f zenturm;
+    zenturmExtractCal(srcImg,zenturm);
+
+    float length=0;
+
+    float t1=pointArray[0][1];
+    float t2=zenturm.y;
+    float t3=pointArray[2][1];
+    float t4=pointArray[3][1];
+
+    float l1=abs(t1-t2);
+    float l2=abs(t2-t3);
+    float l3=abs(t3-t4);
+
+    crossRatio=(l2*(l1+l2+l3))/((l1+l2)*(l2+l3));
+    length=(60-60*crossRatio)/(3-2*crossRatio);
+
+    return length;
+}
