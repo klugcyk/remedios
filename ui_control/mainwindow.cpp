@@ -149,7 +149,7 @@ void MainWindow::on_save_clicked()
 
 void MainWindow::on_measure_clicked()
 {
-    std::string img_path="/home/klug/img/lengthMeasure/";
+    std::string img_path="/home/klug/img/lengthMeasure/measure/";
     std::string img_num=ui->img_name->text().toStdString();
     img_path+=img_num;
     img_path+=".png";

@@ -74,7 +74,7 @@ void laserLengthMeasure::calculate_line(double point_array[10][3],mathGeometry::
 
 /*
     激光线方程标定
-    @imgArray:标定用图片，前25张用于相机标定后10张用于直线方程计算
+    @imgArray:标定用图片，前25张用于相机标定,后10张用于直线方程计算
 */
 void laserLengthMeasure::systemCalibrate(std::vector<cv::Mat> imgArray,std::vector<cv::Mat> laserArray)
 {
@@ -134,22 +134,27 @@ float laserLengthMeasure::lengthMeasure(cv::Mat srcImg)
 
     //1 计算激光中心点位置
     cv::Point2f zenturm;
-    cv::undistort(srcImg,srcImg,cameraMatrix,distCoeffs);
+    //cv::undistort(srcImg,srcImg,cameraMatrix,distCoeffs);
     zenturmExtractCal(srcImg,zenturm);
     //2 计算距离
-    double temp1=laserLine.b*laserLine.x0-laserLine.a*laserLine.y0;
-    double temp2=(zenturm.x-u0)*laserLine.b/fx;
-    double temp3=(zenturm.y-v0)*laserLine.a/fy;
+    double t1=(zenturm.x-u0)/(laserLine.a*fx);
+    double t2=(zenturm.y-v0)/(laserLine.b*fy);
+    double t3=laserLine.x0/laserLine.a;
+    double t4=laserLine.y0/laserLine.b;
+    length=(t3-t4)/(t1-t2);
+    //double temp1=laserLine.b*laserLine.x0-laserLine.a*laserLine.y0;
+    //double temp2=(zenturm.x-u0)*laserLine.b/fx;
+    //double temp3=(zenturm.y-v0)*laserLine.a/fy;
 
-    length=temp1/(temp2-temp3);
+    //length=temp1/(temp2-temp3);
 
-    zenturmCoordinate.z=length;
-    zenturmCoordinate.x=laserLine.a*(length-laserLine.z0)/laserLine.c+laserLine.x0;
-    zenturmCoordinate.y=laserLine.b*(length-laserLine.z0)/laserLine.c+laserLine.y0;
+    //zenturmCoordinate.z=length;
+    //zenturmCoordinate.x=laserLine.a*(length-laserLine.z0)/laserLine.c+laserLine.x0;
+    //zenturmCoordinate.y=laserLine.b*(length-laserLine.z0)/laserLine.c+laserLine.y0;
 
-    length=sqrt(zenturmCoordinate.x*zenturmCoordinate.x+
-                zenturmCoordinate.y*zenturmCoordinate.y+
-                zenturmCoordinate.z*zenturmCoordinate.z);
+    //length=sqrt(zenturmCoordinate.x*zenturmCoordinate.x+
+    //            zenturmCoordinate.y*zenturmCoordinate.y+
+    //            zenturmCoordinate.z*zenturmCoordinate.z);
 
     return length;
 }
