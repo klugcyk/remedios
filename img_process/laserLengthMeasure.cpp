@@ -3,7 +3,7 @@
     author:klug
     献给善良的黑魔导女孩
     start:230815
-    last:230815
+    last:230818
 */
 
 #include "img_process/laserLengthMeasure.hpp"
@@ -142,13 +142,6 @@ void laserLengthMeasure::systemCalibrate(std::vector<cv::Mat> laserArray)
         pointArray[imgCnt][1]=zt.y;
     }
 
-    //pointLength[0]=abs(pointArray[0][1]-pointArray[1][1]);
-    //pointLength[1]=abs(pointArray[2][1]-pointArray[1][1]);
-    //pointLength[2]=abs(pointArray[2][1]-pointArray[3][1]);
-
-    //crossRatio=(pointLength[1]*(pointLength[0]+pointLength[1]+pointLength[2]))/
-    //        ((pointLength[0]+pointLength[1])*(pointLength[2]+pointLength[1]));
-
 #ifdef laserLengthMeasurePrintMsgInfo
     printf("Achieve the system calibrate...\n");
 #endif
@@ -170,7 +163,7 @@ float laserLengthMeasure::lengthMeasure(cv::Mat srcImg)
     //1 计算激光中心点位置
     cv::Point2f zenturm;
     //cv::undistort(srcImg,srcImg,cameraMatrix,distCoeffs);
-    zenturmExtractCal(srcImg,zenturm);
+    zenturmExtract(srcImg,zenturm);
     //2 计算距离
     double t1=(zenturm.x-u0)/(laserLine.a*fx);
     double t2=(zenturm.y-v0)/(laserLine.b*fy);
@@ -201,11 +194,19 @@ float laserLengthMeasure::lengthMeasure(cv::Mat srcImg)
 float laserLengthMeasure::lengthMeasureCrossRatio(cv::Mat srcImg)
 {
     cv::Point2f zenturm;
-    zenturmExtractCal(srcImg,zenturm);
+    //zenturmExtractCal(srcImg,zenturm);
+    zenturmExtract(srcImg,zenturm);
 
-    float length=0;
+    //超过标定量程
+    if(zenturm.y>pointArray[2][1])
+    {
+#ifdef laserLengthMeasurePrintErrorInfo
+        printf("overload...\n");
+#endif
+        return -1;
+    }
 
-    float t1=pointArray[0][1];
+    float t1=pointArray[0][1];//先前算出的点坐标
     float t2=zenturm.y;
     float t3=pointArray[2][1];
     float t4=pointArray[3][1];
@@ -214,8 +215,14 @@ float laserLengthMeasure::lengthMeasureCrossRatio(cv::Mat srcImg)
     float l2=abs(t2-t3);
     float l3=abs(t3-t4);
 
-    crossRatio=(l2*(l1+l2+l3))/((l1+l2)*(l2+l3));
-    length=(60-60*crossRatio)/(3-2*crossRatio);
+    crossRatio=(l2*(l1+l2+l3))/((l1+l2)*(l2+l3));//交比从图像中算出
+
+    t1=Viel-Ein;
+    t2=Drei-Ein;
+    t3=Drei*t1-crossRatio*Viel*t2;
+    t4=t1-crossRatio*t2;
+
+    float length=t3/t4;//(60-60*crossRatio)/(3-2*crossRatio);
 
     return length;
 }

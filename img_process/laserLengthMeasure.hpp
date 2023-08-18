@@ -3,7 +3,7 @@
     author:klug
     献给杜尔西内娅德尔托博索
     start:230815
-    last:230816
+    last:230818
 */
 
 #ifndef laserLengthMeasure_hpp
@@ -40,9 +40,10 @@ private:
     double pointArray[4][2];
     //double pointLength[3];
     double crossRatio=0;
-    const double calibratePointEin=0;
-    const double calibratePointZwei=20;
-    const double calibratePointdrei=30;
+    const double Ein=0;
+    const double Zwei=20;
+    const double Drei=30;
+    const double Viel=40;
 
 };
 

@@ -3,7 +3,7 @@
     author:klug
     献给美人儿蕾梅黛丝
     start:230427
-    last:230816
+    last:230818
 */
 
 #include "mainwindow.h"
@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
             }
         }*/
 
-        for(int i=101;i<=104;i++)
+        for(int i=1;i<=4;i++)
         {
             std::string path=cal_img_path;
             path+=std::to_string(i);
